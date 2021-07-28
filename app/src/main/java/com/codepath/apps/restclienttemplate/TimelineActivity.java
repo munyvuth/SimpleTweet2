@@ -1,19 +1,24 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,9 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TwitterAdapter adapter;
     EndlessRecyclerViewScrollListener scrollListener;
+    FloatingActionButton fabCompose;
     public static final String TAG = "TimelineActivity";
+    public static final int REQUEST_CODE = 28;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +77,30 @@ public class TimelineActivity extends AppCompatActivity {
         };
         rvTweets.addOnScrollListener(scrollListener);
 
+        fabCompose = findViewById(R.id.fabCompose);
+        fabCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
+                Log.i(TAG, "Navigating to ComposeActivity!");
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
         populateHomeTimeline();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            //adding new tweet to start of list
+            tweets.add(0, tweet);
+            //notify adapter of inserted item
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void loadMore() {

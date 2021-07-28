@@ -3,10 +3,12 @@ package com.codepath.apps.restclienttemplate.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Parcel
 public class Tweet {
 
     public String createdAt;
@@ -14,7 +16,10 @@ public class Tweet {
     public User user;
     public long id;
     public int retweetCount;
-    public int favoritCount;
+    public int favoriteCount;
+
+    // empty constructor needed by the Parceler library
+    public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
@@ -23,7 +28,7 @@ public class Tweet {
         tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.retweetCount = jsonObject.getInt("retweet_count");
-        tweet.favoritCount = jsonObject.getInt("favorite_count");
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
         return tweet;
     }
 

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.util.List;
@@ -80,12 +81,12 @@ public class TwitterAdapter extends RecyclerView.Adapter<TwitterAdapter.ViewHold
 
         public void bind(Tweet tweet) {
 
-            Glide.with(context).load(tweet.user.profileImageUrl).transform(new RoundedCorners(10)).into(ivProfile);
+            Glide.with(context).load(tweet.user.profileImageUrl).override(400,400).apply(RequestOptions.circleCropTransform()).into(ivProfile);
             tvName.setText(tweet.user.name);
             tvScreenName.setText("@" + tweet.user.screenName);
             tvTimestamp.setText(TimeFormatter.getTimeDifference(tweet.createdAt));
             tvText.setText(tweet.text);
-            tvFavorite.setText(Integer.toString(tweet.favoritCount));
+            tvFavorite.setText(Integer.toString(tweet.favoriteCount));
             tvRetweet.setText(Integer.toString(tweet.retweetCount));
         }
     }
